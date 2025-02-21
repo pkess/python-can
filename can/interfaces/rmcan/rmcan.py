@@ -5,6 +5,7 @@ see https://manuals.plus/proemion/byte-command-protocol-binary-commands-manual
 
 import logging
 import socket
+import struct
 import time
 
 from collections import deque
@@ -20,6 +21,13 @@ class RmcanFrame(object):
 
     def to_raw(self):
         b = bytearray([0x43, self.command])
+        b.append(len(self.data))
+        b.extend(self.data)
+        cs = 0
+        for i in b:
+            cs = cs ^ i
+        b.append(cs)
+        b.append(0x0D)
         print(b)
         return b
 
@@ -54,8 +62,10 @@ class RmcanBus(can.BusABC):
         :param msg: A message object.
         :param timeout: Ignored
         """
-        frame = RmcanFrame(0x00, msg.data)
-        self.__socket.sendall(frame.to_raw())
+        data = bytearray(struct.pack('>H', msg.arbitration_id))
+        data.extend(msg.data)
+        frame = RmcanFrame(0x00, data)
+        self.__socket.sendall(bytes(frame.to_raw()))
 
     def shutdown(self):
         """Stops all active periodic tasks and closes the socket."""
