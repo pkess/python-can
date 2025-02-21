@@ -13,6 +13,17 @@ import can
 log = logging.getLogger(__name__)
 
 
+class RmcanFrame(object):
+    def __init__(self, command, data):
+        self.command = command
+        self.data = data
+
+    def to_raw(self):
+        b = bytearray([0x43, self.command])
+        print(b)
+        return b
+
+
 class RmcanBus(can.BusABC):
     def __init__(self, channel=None, host="localhost", port=30000, **kwargs):
         """Connects to a CAN bus served by Proemion can interface.
@@ -43,7 +54,8 @@ class RmcanBus(can.BusABC):
         :param msg: A message object.
         :param timeout: Ignored
         """
-        pass
+        frame = RmcanFrame(0x00, msg.data)
+        self.__socket.sendall(frame.to_raw())
 
     def shutdown(self):
         """Stops all active periodic tasks and closes the socket."""
