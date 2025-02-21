@@ -22,6 +22,7 @@ __all__ = [
     "nixnet",
     "pcan",
     "robotell",
+    "rmcan",
     "seeedstudio",
     "serial",
     "slcan",
@@ -59,6 +60,7 @@ BACKENDS: Dict[str, Tuple[str, str]] = {
     "neousys": ("can.interfaces.neousys", "NeousysBus"),
     "etas": ("can.interfaces.etas", "EtasBus"),
     "socketcand": ("can.interfaces.socketcand", "SocketCanDaemonBus"),
+    "rmcan": ("can.interfaces.rmcan", "RmcanBus"),
 }
 
 
