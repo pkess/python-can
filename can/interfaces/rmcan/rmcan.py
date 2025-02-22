@@ -64,7 +64,19 @@ class RmcanBus(can.BusABC):
         """
         data = bytearray(struct.pack('>H', msg.arbitration_id))
         data.extend(msg.data)
-        frame = RmcanFrame(0x00, data)
+        if msg.is_remote_frame:
+            log.error("RmcanBus: remote frames are not supported")
+            return
+
+        if msg.is_error_frame:
+            log.error("RmcanBus: error frames are not supported")
+            return
+
+        if msg.is_extended_id:
+            frame = RmcanFrame(0x02, data)
+        else:
+            frame = RmcanFrame(0x00, data)
+
         self.__socket.sendall(bytes(frame.to_raw()))
 
     def shutdown(self):
