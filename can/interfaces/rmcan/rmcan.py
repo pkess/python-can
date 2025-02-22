@@ -64,7 +64,6 @@ class RmcanFrame(object):
             cs = cs ^ i
         b.append(cs)
         b.append(0x0D)
-        print(b)
         return b
 
 
